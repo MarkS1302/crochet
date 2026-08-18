@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState, type PointerEvent, type WheelEvent } from 'react'
 import { INSTAGRAM_URL } from './shared'
 import { BAGS } from './bags'
 
@@ -10,11 +10,38 @@ const SLOT_STYLES = [
 
 export function HeroSection() {
   const [active, setActive] = useState(0)
+  const dragStartX = useRef<number | null>(null)
+
+  const showPrevious = () => { setActive((current) => (current - 1 + BAGS.length) % BAGS.length); }
+  const showNext = () => { setActive((current) => (current + 1) % BAGS.length); }
 
   useEffect(() => {
-    const timer = window.setInterval(() => setActive((current) => (current + 1) % BAGS.length), 3600)
-    return () => window.clearInterval(timer)
+    const timer = window.setInterval(showNext, 3600)
+    return () => { window.clearInterval(timer); }
   }, [])
+
+  const handlePointerDown = (event: PointerEvent<HTMLDivElement>) => {
+    if (!event.isPrimary) return
+    event.preventDefault()
+    dragStartX.current = event.clientX
+    event.currentTarget.setPointerCapture(event.pointerId)
+  }
+
+  const handlePointerEnd = (event: PointerEvent<HTMLDivElement>) => {
+    if (dragStartX.current === null) return
+    const distance = event.clientX - dragStartX.current
+    dragStartX.current = null
+    if (event.currentTarget.hasPointerCapture(event.pointerId)) event.currentTarget.releasePointerCapture(event.pointerId)
+    if (Math.abs(distance) < 40) return
+    // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+    distance < 0 ? showNext() : showPrevious()
+  }
+
+  const handleWheel = (event: WheelEvent<HTMLDivElement>) => {
+    if (Math.abs(event.deltaX) < Math.abs(event.deltaY) || Math.abs(event.deltaX) < 20) return
+    // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+    event.deltaX > 0 ? showNext() : showPrevious()
+  }
 
   const current = BAGS[active]
 
@@ -28,7 +55,21 @@ export function HeroSection() {
       </div>
 
       <div className="relative z-20 -mt-4 sm:-mt-16 lg:-mt-24">
-        <div className="relative mx-auto h-77.5 w-full max-w-280 sm:h-97.5 md:h-117.5 lg:h-132.5">
+        <div
+          aria-label="Handmade bag carousel"
+          aria-roledescription="carousel"
+          className="relative mx-auto h-77.5 w-full max-w-280 cursor-grab touch-pan-y select-none active:cursor-grabbing sm:h-97.5 md:h-117.5 lg:h-132.5"
+          onKeyDown={(event) => {
+            if (event.key === 'ArrowLeft') showPrevious()
+            if (event.key === 'ArrowRight') showNext()
+          }}
+          onPointerCancel={() => { dragStartX.current = null }}
+          onPointerDown={handlePointerDown}
+          onPointerUp={handlePointerEnd}
+          onWheel={handleWheel}
+          role="region"
+          tabIndex={0}
+        >
           {BAGS.map((bag, index) => {
             let offset = index - active
             if (offset > BAGS.length / 2) offset -= BAGS.length
@@ -41,7 +82,7 @@ export function HeroSection() {
             return (
               <figure aria-hidden={!center} className="absolute inset-x-0 bottom-0 mx-auto flex h-full w-[64%] flex-col justify-end transition-[transform,opacity,filter] duration-[1100ms] ease-[cubic-bezier(0.16,1,0.3,1)] sm:w-[54%] md:w-[46%]" key={bag.image} style={{ filter: visible ? undefined : 'blur(4px)', opacity: visible ? 1 : 0, transform: `translate(${slot.x}, ${slot.y}) scale(${slot.scale})`, zIndex: slot.z }}>
                 <div className="absolute bottom-[6%] left-1/2 h-[3%] w-[54%] -translate-x-1/2 rounded-full bg-brand-ink/30 blur-md" />
-                <img alt={`${bag.name} handmade crochet bag`} className="relative h-full w-full object-contain object-bottom drop-shadow-[0_18px_16px_rgba(56,41,37,0.16)]" src={bag.image} />
+                <img alt={`${bag.name} handmade crochet bag`} className="relative h-full w-full object-contain object-bottom drop-shadow-[0_18px_16px_rgba(56,41,37,0.16)]" draggable={false} src={bag.image} />
               </figure>
             )
           })}
