@@ -7,9 +7,8 @@ export function Navigation() {
       className="flex items-center justify-between px-6 py-5 sm:px-10 lg:px-[6vw]"
       aria-label="Main navigation"
     >
-      <a href="#top">
-        <AglaiaLogo className="h-16 w-auto p-1" aria-hidden="true" />
-      </a>
+        <AglaiaLogo className="h-16 w-auto p-1" aria-hidden="true" alt="Aglaia's Crochet logo" />
+
       <div className="flex items-center gap-4 text-xs tracking-[0.04em] sm:gap-7 sm:text-sm">
         <a className="hidden transition-opacity hover:opacity-55 sm:block" href="#collection">Collection</a>
         <a className="hidden transition-opacity hover:opacity-55 sm:block" href="#about">About</a>
