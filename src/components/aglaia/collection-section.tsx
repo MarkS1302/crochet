@@ -17,7 +17,7 @@ export function CollectionSection() {
     <section className="overflow-hidden bg-brand-paper px-6 py-24 sm:px-10 sm:py-32 lg:px-[6vw]" id="collection">
       <div className="grid gap-8 lg:grid-cols-[1.3fr_0.7fr] lg:items-end">
         <div>
-          <Eyebrow>The collection · 02</Eyebrow>
+          <Eyebrow>The collection · 03</Eyebrow>
           <h2 className="mt-5 font-league text-[clamp(3rem,5.8vw,6.3rem)] leading-[0.86] tracking-[-0.065em]">
             Made for <em className="font-display">the long way</em><br />around.
           </h2>

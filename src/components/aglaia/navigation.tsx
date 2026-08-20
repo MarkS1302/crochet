@@ -13,6 +13,7 @@ export function Navigation() {
       <div className="flex items-center gap-4 text-xs tracking-[0.04em] sm:gap-7 sm:text-sm">
         <a className="hidden transition-opacity hover:opacity-55 sm:block" href="#collection">Collection</a>
         <a className="hidden transition-opacity hover:opacity-55 sm:block" href="#about">About</a>
+        <a className="hidden transition-opacity hover:opacity-55 sm:block" href="#bespoke">Custom</a>
         <a className="hidden transition-opacity hover:opacity-55 md:block" href={INSTAGRAM_URL} target="_blank" rel="noreferrer">Instagram</a>
         <a
           className="inline-flex items-center gap-2 border border-brand-ink px-3 py-2 transition-colors hover:bg-brand-ink hover:text-brand-paper sm:px-4"
